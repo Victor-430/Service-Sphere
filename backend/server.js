@@ -3,6 +3,13 @@ import ConnectDB from "./config/db.js";
 import cors from "cors";
 import users from "./routes/users.js";
 import routeNotFound from "./middleware/routeError.js";
+import crypto from "crypto";
+
+const token = crypto.randomBytes(40).toString("hex");
+const token2 = crypto.randomBytes(40).toString("base64");
+
+console.log(token);
+console.log(token2);
 
 // mongoose connection
 ConnectDB();

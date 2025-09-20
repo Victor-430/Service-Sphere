@@ -22,7 +22,7 @@ import emailService from "../services/emailService";
 // remove password and emailtoken,passwordreset token from response
 // return response
 // 5. get user profile
-// update user profile
+// 6. update user profile
 // change password
 // verify email
 // logout
@@ -185,6 +185,70 @@ res.status(200).json({
     message:"Login failed",
     error: process.env.NODE_ENV === 'development' ? error.message : "Internal server error"  })
 }
+}
+
+// get current user profile
+const getProfile = async (req, res) => {
+try{
+  const user = await User.findById(req.user._id).select('-password')
+
+  res.status(200).json({
+data: {user}
+  })
+}catch(error){
+console.error("Get profile error:", error)
+res.status(500).json({
+  message:"Failed to get user profile",
+
+})
+}
+}
+
+// update user profile 
+const updateProfile = async (req, res) => {
+  try{
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+      res.status(400).json({
+      message: 'Validation error',
+      errors: errors.array()
+    })
+
+    }
+
+
+const allowedUpdates = ['firstname', 'lastname', 'location', 'skills', 'phone', 'bio', 'certifications' ]
+const updates ={}
+
+const updatedField = allowedUpdates.forEach(field => {
+
+  if(req.body[field] !== undefined){
+    updates[field] = req.body[field]
+  }
+
+}
+)
+
+const user = await User.findByIdAndUpdate(req.user._id, updates, {new:true, runValidator: true}).select('-password')
+
+if(!user){
+  res.status(400).json({
+    message: "User not found"
+  })
+}
+
+res.status(200).json({
+  message: "Profile updated successfully",
+  data: {user}
+})
+
+}catch(error){
+console.error('Profile update error:', error)
+res.status(500).json({
+  message: 'Failed to update profile'
+})
+  }
+  
 }
 
 export default authController;

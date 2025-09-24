@@ -23,7 +23,8 @@ import emailService from "../services/emailService";
 // return response
 // 5. get user profile
 // 6. update user profile
-// change password
+// 7. change password
+// 8. forgot password
 // verify email
 // logout
 
@@ -250,5 +251,48 @@ res.status(500).json({
   }
   
 }
+
+// change password
+const changePassword = async (res, req) => {
+  try{
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+      return res.status(400).json({
+        message: 'validation error',
+        errors: errors.array()
+      })
+    }
+const {currentPassword, newPassword} = req.body
+
+// get user with password
+const user = await User.findById(req.user._id).select('+password')
+
+//verify current password
+const isCurrentPassword = await user.comparePassword(currentPassword)
+
+if(!isCurrentPassword){
+return res.status(400).json({
+  message: "Current password is incorrect"
+})
+}
+
+//update password
+user.password = newPassword
+await user.save()
+
+res.status(200).json({
+  message:"password changed successfully"
+})
+
+
+  }catch(error){
+    console.log(`error changing password:`, error)
+    res.status(500).json({"message":"internal server error"})
+  }
+}
+
+// forgot password
+
+
 
 export default authController;

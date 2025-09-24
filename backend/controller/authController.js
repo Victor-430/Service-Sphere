@@ -287,12 +287,60 @@ res.status(200).json({
 
   }catch(error){
     console.log(`error changing password:`, error)
-    res.status(500).json({"message":"internal server error"})
+    res.status(500).json({"message":"failed to change password"})
   }
 }
 
 // forgot password
+const forgotPassword = async (req, res) => {
+  // const errors = await validationResult(req)
+  // if(!errors.isEmpty()){
+  //   return res.status(400).json({
+  //     message:"validation error"
+  //   })
+  // }
+  
+  try{
 
+const {email} = req.body
+  // get user by email
+  const user = await User.findOne(email)
+  if(!user){
+    return res.status(200).json({
+      message:"A password reset link  has been set to the an account with the email"
+    })
+  }
+  const resetToken = User.generatePasswordRestToken()
+   await user.save()
+
+  //  send reset email
+  try{
+    await emailService.sendPasswordResetEmail(user.email, user.firstName, resetToken)
+  
+  }catch(error){
+    console.log('password reset email failed:', error)
+    user.passwordRestToken = undefined
+    user.passwordResetExpires = undefined
+    await user.save()
+
+
+    return res.status(500).json({
+      message:"Failed to process password reset email"
+    })
+  }
+
+res.status(200).json({
+  message:"Password reset link has been sent to your email"
+})
+
+   }catch(error){
+    console.log("forgot password error:", error)
+return res.status(500).json({
+      message:"Failed to process password reset email"
+    })
+  }
+
+}
 
 
 export default authController;

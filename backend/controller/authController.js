@@ -293,12 +293,6 @@ res.status(200).json({
 
 // forgot password
 const forgotPassword = async (req, res) => {
-  // const errors = await validationResult(req)
-  // if(!errors.isEmpty()){
-  //   return res.status(400).json({
-  //     message:"validation error"
-  //   })
-  // }
   
   try{
 
@@ -307,7 +301,7 @@ const {email} = req.body
   const user = await User.findOne(email)
   if(!user){
     return res.status(200).json({
-      message:"A password reset link  has been set to the an account with the email"
+      message:"A password reset link has been set to the an account with the email"
     })
   }
   const resetToken = User.generatePasswordRestToken()
@@ -342,5 +336,104 @@ return res.status(500).json({
 
 }
 
+// reset password
+const resetPassword = async (req, res) => {
+  try{
+const {token, newPassword} = req.body
 
-export default authController;
+const user = await User.findOne({
+  passwordRestToken: token,
+passwordResetExpires:{$gt: Date.now()}
+
+})
+
+if(!user){
+  return res.status(400).json({
+    message:"Password reset token is invalid or has expired"
+  })
+}
+
+// update password
+user.password = newPassword
+user.passwordResetExpires = undefined
+user.passwordRestToken = undefined
+await user.save()
+
+res.status(200).json({
+  message:"password reset successfully"
+})
+
+  }catch(error){console.log("passwrod reset errro:", error)
+res.status(500).json({
+  message:"Faile to reset password"
+})
+
+  }
+
+
+}
+
+// verify email
+const verifyEmail = async (req, res) => {
+try{
+
+
+const {token} = req.params
+
+const user = await User.findOne({emailVerificationToken: token})
+
+if(!user){
+  return res.status(400).json({
+    message:"Invalid verification token"
+  })
+}
+
+user.isVerified = true
+user.emailVerifiedAt = new Date()
+user.emailVerificationToken = undefined
+await user.save()
+
+res.status(200).json({
+  message: "Email verified successful"
+})
+
+}catch(error){
+  console.log("Email verification error:", error)
+  res.status(500).json({
+    message: "Failed to verify email"
+  })
+
+}
+  
+}
+
+// logout
+
+const logout = async (req, res) => {
+
+  try{
+    console.log(`User ${req.user._id} logged out at ${new Date()}`)
+    res.status(200).json({
+      message:"Logout successful"
+    })
+  }catch(error){
+    console.log("logout error:", error)
+    res.status(500).json({
+      message: "Logout failed"
+    })
+  }
+}
+
+
+export {
+  register,
+  login,
+  getProfile,
+  updateProfile,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
+  logout
+
+}

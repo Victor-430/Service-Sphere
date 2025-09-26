@@ -6,7 +6,7 @@ import routeNotFound from "./middleware/routeError.js";
 import auth from "./routes/auth.js";
 
 // mongoose connection
-// ConnectDB();
+ConnectDB();
 
 const app = express();
 
@@ -35,7 +35,7 @@ app.use(urlencoded({ extended: false }));
 
 // routes
 app.use("/api/users", users);
-app.use("/api/users", auth);
+app.use("/api/auth", auth);
 
 // middleware
 app.use(routeNotFound);

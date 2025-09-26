@@ -424,17 +424,17 @@ const logout = async (req, res) => {
   }
 }
 
-export default register
 
-// export default {
-//   register,
-//   login,
-//   getProfile,
-//   updateProfile,
-//   changePassword,
-//   forgotPassword,
-//   resetPassword,
-//   verifyEmail,
-//   logout
+export default {
+  register,
+  login,
+  getProfile,
+  updateProfile,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
+  logout, 
+  generateRefreshToken
 
-// }
+}

@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { validationResult } from "express-validator";
-import User from "../models/User";
-import emailService from "../services/emailService";
+import User from "../models/User.js";
+import emailService from "../services/emailService.js";
 
 // 1. generate jwt token
 // 2. refresh jwt token
@@ -424,16 +424,17 @@ const logout = async (req, res) => {
   }
 }
 
+export default register
 
-export {
-  register,
-  login,
-  getProfile,
-  updateProfile,
-  changePassword,
-  forgotPassword,
-  resetPassword,
-  verifyEmail,
-  logout
+// export default {
+//   register,
+//   login,
+//   getProfile,
+//   updateProfile,
+//   changePassword,
+//   forgotPassword,
+//   resetPassword,
+//   verifyEmail,
+//   logout
 
-}
+// }

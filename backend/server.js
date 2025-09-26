@@ -3,16 +3,10 @@ import ConnectDB from "./config/db.js";
 import cors from "cors";
 import users from "./routes/users.js";
 import routeNotFound from "./middleware/routeError.js";
-import crypto from "crypto";
-
-const token = crypto.randomBytes(40).toString("hex");
-const token2 = crypto.randomBytes(40).toString("base64");
-
-console.log(token);
-console.log(token2);
+import auth from "./routes/auth.js";
 
 // mongoose connection
-ConnectDB();
+// ConnectDB();
 
 const app = express();
 
@@ -41,6 +35,7 @@ app.use(urlencoded({ extended: false }));
 
 // routes
 app.use("/api/users", users);
+app.use("/api/users", auth);
 
 // middleware
 app.use(routeNotFound);

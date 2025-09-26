@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "Email is required"],
-      unique: true,
+      // unique: true,
       lowercase: true,
       match: ["Please enter a valid email"],
     },
@@ -56,11 +56,11 @@ const userSchema = new mongoose.Schema(
     certification: [String], //for experts
     isVerified: {
       type: Boolean,
-      deafult: false,
+      default: false,
     },
     isActive: {
       type: Boolean,
-      deafult: false,
+      default: false,
     },
     rating: {
       type: Number,

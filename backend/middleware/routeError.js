@@ -1,24 +1,16 @@
-const routeNotFound = (res, req, next) => {
-  if (!req.method) {
-    res.status(400).json({ error: "route not found" });
-    throw new Error("route not found");
-  }
-  next();
-  console.log(req);
+const routeNotFound = (req, res, next) => {
+  const error = new Error("route not found");
+  error.status = 404;
+  next(error);
 };
 
-export default routeNotFound;
+const globalErrorHandler = (res, req, next, error) => {
+  if (error.status) {
+    res.status(error.status).json({ message: error.message });
+  } else {
+    res.status(500).json({ message: "Internal server error" });
+  }
+  next(error);
+};
 
-// export const errorhandler = (err, req, res, next) => {
-//   if (err.status) {
-//     res.status(err.status).json({ message: err.message });
-//   } else {
-//     res.status(500).json({ message: "internal server error" });
-//   }
-// };
-
-// export const routeError = (req, res, next) => {
-//   const error = new Error("route not found");
-//   error.status = 404;
-//   next(error);
-// };
+export default { routeNotFound, globalErrorHandler };

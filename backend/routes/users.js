@@ -1,10 +1,19 @@
 import { Router } from "express";
-import { deleteAllUsers, getAllUsers } from "../controller/userController.js";
+import authenticateToken from "../middleware/auth.js";
+import route from "../controller/authController.js";
+import profileValidation from "./auth.js";
 
 const router = Router();
 
-// users route
-router.get("/", getAllUsers);
-router.delete("/:id", deleteAllUsers);
+// protected routes
+(router, get("/profile", authenticateToken, route.getProfile));
+
+// uppdate profile
+router.put(
+  "/profile",
+  authenticateToken,
+  profileValidation.updateProfileValidation,
+  route.updateProfile,
+);
 
 export default router;

@@ -100,8 +100,8 @@ const resetPasswordValidation = [
 // public route
 router.post("/register", registerValidation, route.register);
 router.post("/login", loginValidation, route.login);
-router.post("/forgot-password", forgotPasswordValidation);
-router.post("/reset-password", resetPasswordValidation);
+router.post("/forgot-password", forgotPasswordValidation, route.forgotPassword);
+router.post("/reset-password", resetPasswordValidation, route.resetPassword);
 
 // protected route, authetication required
 router.put(
@@ -110,13 +110,7 @@ router.put(
   changePasswordValidation,
   route.changePassword,
 );
-(router, get("/profile", authenticateToken, route.getProfile));
-router.put(
-  "/profile",
-  authenticateToken,
-  updateProfileValidation,
-  route.updateProfile,
-);
+
 router.post("/logout", authenticateToken, route.logout);
 
-export default router;
+export default { router, updateProfileValidation };

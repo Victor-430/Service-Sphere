@@ -1,9 +1,10 @@
 import express, { json, urlencoded } from "express";
 import ConnectDB from "./config/db.js";
 import cors from "cors";
-import users from "./routes/users.js";
 import routeNotFound from "./middleware/routeError.js";
-import auth from "./routes/auth.js";
+import authRoute from "./routes/auth.js";
+import applicationRouter from "./routes/applications.js";
+import userRoute from "./routes/users.js";
 
 // mongoose connection
 ConnectDB();
@@ -34,8 +35,9 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 
 // routes
-app.use("/api/users", users);
-app.use("/api/auth", auth.router);
+app.use("/api/users", userRoute);
+app.use("/api/auth", authRoute.authRouter);
+app.use("/api/services", applicationRouter);
 
 // middleware
 app.use(routeNotFound);

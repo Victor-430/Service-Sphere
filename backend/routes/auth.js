@@ -1,9 +1,9 @@
 import express from "express";
 import { body } from "express-validator";
 import authenticateToken from "../middleware/auth.js";
-import route from "../controller/authController.js";
+import authController from "../controller/authController.js";
 
-const router = express.Router();
+const authRouter = express.Router();
 
 //validation rules
 const registerValidation = [
@@ -98,19 +98,27 @@ const resetPasswordValidation = [
 ];
 
 // public route
-router.post("/register", registerValidation, route.register);
-router.post("/login", loginValidation, route.login);
-router.post("/forgot-password", forgotPasswordValidation, route.forgotPassword);
-router.post("/reset-password", resetPasswordValidation, route.resetPassword);
+authRouter.post("/register", registerValidation, authController.register);
+authRouter.post("/login", loginValidation, authController.login);
+authRouter.post(
+  "/forgot-password",
+  forgotPasswordValidation,
+  authController.forgotPassword,
+);
+authRouter.post(
+  "/reset-password",
+  resetPasswordValidation,
+  authController.resetPassword,
+);
 
 // protected route, authetication required
-router.put(
+authRouter.put(
   "/change-password",
   authenticateToken,
   changePasswordValidation,
-  route.changePassword,
+  authController.changePassword,
 );
 
-router.post("/logout", authenticateToken, route.logout);
+authRouter.post("/logout", authenticateToken, authController.logout);
 
-export default { router, updateProfileValidation };
+export default { authRouter, updateProfileValidation };

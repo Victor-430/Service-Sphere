@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const applicationShema = new mongoose.Schema(
+const applicationSchema = new mongoose.Schema(
   {
     serviceId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -48,6 +48,19 @@ const applicationShema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const Application = new mongoose.model("Application", applicationShema);
+applicationSchema.index({ serviceId: 1, clientId: 1 }, { unique: true });
+applicationSchema.index({ clientId: 1, status: 1 });
+applicationSchema.index({ expertId: 1, status: 1 });
+
+// update service applicatons count after save
+applicationSchema.post("save", async function () {
+  const Service = mongoose.model("Service");
+  const count = await mongoose.model("Application").countDocuments({
+    serviceId: this.serviceId,
+  });
+  await Service.findByIdAndUpdate(this.serviceId, { applicationCount: count });
+});
+
+const Application = new mongoose.model("Application", applicationSchema);
 
 export default Application;

@@ -3,17 +3,17 @@ import authenticateToken from "../middleware/auth.js";
 import route from "../controller/authController.js";
 import profileValidation from "./auth.js";
 
-const router = Router();
+const userRouter = Router();
 
 // protected routes
-router.get("/profile", authenticateToken, route.getProfile);
+userRouter.get("/profile", authenticateToken, route.getProfile);
 
 // uppdate profile
-router.put(
+userRouter.put(
   "/profile",
   authenticateToken,
   profileValidation.updateProfileValidation,
   route.updateProfile,
 );
 
-export default router;
+export default userRouter;

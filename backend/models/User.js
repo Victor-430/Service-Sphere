@@ -20,7 +20,10 @@ const userSchema = new mongoose.Schema(
       required: [true, "Email is required"],
       // unique: true,
       lowercase: true,
-      match: ["Please enter a valid email"],
+      match: [
+        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+        "Please enter a valid email",
+      ],
     },
     password: {
       type: String,
@@ -39,11 +42,11 @@ const userSchema = new mongoose.Schema(
     },
     bio: {
       type: String,
-      maxlength: [500, "Bio cannot exceed 500 characters"], //reg exp
+      maxlength: [500, "Bio cannot exceed 500 characters"],
     },
     phone: {
       type: String,
-      match: ["Please enter a valid phone number"],
+      match: [/^\+?[1-9]\d{1,14}$/, "Please enter a valid phone number"],
     },
     location: {
       address: String,

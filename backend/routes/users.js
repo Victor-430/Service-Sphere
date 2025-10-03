@@ -6,7 +6,7 @@ import profileValidation from "./auth.js";
 const router = Router();
 
 // protected routes
-(router, get("/profile", authenticateToken, route.getProfile));
+router.get("/profile", authenticateToken, route.getProfile);
 
 // uppdate profile
 router.put(

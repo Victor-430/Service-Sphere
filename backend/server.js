@@ -35,7 +35,7 @@ app.use(urlencoded({ extended: false }));
 
 // routes
 app.use("/api/users", users);
-app.use("/api/auth", auth);
+app.use("/api/auth", auth.router);
 
 // middleware
 app.use(routeNotFound);

@@ -37,6 +37,58 @@ const applicationController = {
       });
     }
   },
+
+  _updateAplicationStatus: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, expertResponse } = req.body;
+
+      const application = await Application.findById(id);
+
+      if (!application) {
+        return res.status(400).json({
+          message: "Application error",
+        });
+      }
+      // check if expert owns the service
+      if (application.expertId.toString() !== req.user._id.toString()) {
+        return res.status(403).json({
+          message: "You can only update applications for your services",
+        });
+      }
+
+      application.status = status;
+      if (expertResponse) {
+        application.expertResponse = {
+          message: expertResponse,
+          respondedAt: new Date(),
+        };
+      }
+
+      await application.save();
+
+      await application.populate([
+        { path: "clientId", select: "firstName lastName profileImage" },
+        { path: "serviceId", select: "title" },
+      ]);
+
+      res.status(200).json({
+        data: { application },
+        message: "Application status updated",
+      });
+    } catch (error) {
+      console.log("Update application status error:", error);
+      res.status(500).json({
+        message: "Failed to update application status",
+      });
+    }
+  },
+  get updateAplicationStatus() {
+    return this._updateAplicationStatus;
+  },
+  set updateAplicationStatus(value) {
+    this._updateAplicationStatus = value;
+  },
 };
 
 export default applicationController;

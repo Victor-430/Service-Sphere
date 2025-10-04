@@ -27,7 +27,7 @@ const applicationSchema = new mongoose.Schema(
       required: [true, "Apllication message is required"],
     },
     proposedPrice: {
-      type: number,
+      type: Number,
       min: [0, "Proposed price cannot be negative"],
     },
     proposedTimeline: {
@@ -37,7 +37,7 @@ const applicationSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["pending", "accepted", "withdrawn", "rejected"],
-      default: pending,
+      default: "pending",
     },
     attachments: [String],
     expertResponse: {

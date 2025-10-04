@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import authenticateToken from "../middleware/auth.js";
-import applicationController from "../controller/applicationController";
+import applicationController from "../controller/applicationController.js";
 import authorizeRoles from "../middleware/authorization.js";
 
 const applicationRouter = express.Router();
@@ -33,5 +33,13 @@ applicationRouter.put(
   expertValidation,
   applicationController.updateAplicationStatus,
 );
+
+// withdraw routes
+applicationRouter.put(
+  "/:id/withdraw",
+  authenticateToken,
+  authorizeRoles("client"),
+  applicationController.withdrawApplication,
+)
 
 export default applicationRouter;

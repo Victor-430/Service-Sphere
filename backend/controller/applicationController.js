@@ -1,4 +1,4 @@
-import Application from "../models/Applications";
+import Application from "../models/Applications.js";
 
 const applicationController = {
   // get user's application (Client view)
@@ -38,7 +38,8 @@ const applicationController = {
     }
   },
 
-  _updateAplicationStatus: async (req, res) => {
+  // update appliation status (Expert only)
+  updateAplicationStatus: async (req, res) => {
     try {
       const { id } = req.params;
       const { status, expertResponse } = req.body;
@@ -83,11 +84,46 @@ const applicationController = {
       });
     }
   },
-  get updateAplicationStatus() {
-    return this._updateAplicationStatus;
-  },
-  set updateAplicationStatus(value) {
-    this._updateAplicationStatus = value;
+
+  // withdraw application (Client only)
+  withdrawApplication: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const application = Application.findById(id);
+
+      if (!application) {
+        res.status(404).json({
+          message: "Application not found",
+        });
+      }
+
+      // check ownership
+      if (application.clientId.toString() !== req.user._id.toString()) {
+        res.status(403).json({
+          message: "You can only withdraw your own application",
+        });
+      }
+
+      // can only withdraw pending application
+      if (application.status !== "pending") {
+        res.status(400).json({
+          message: "You can only withdraw pending application",
+        });
+      }
+
+      application.status = "withdrawn";
+      await application.save();
+
+      res.status(200).json({
+        message: "Application withdrawn successfully",
+      });
+    } catch (error) {
+      console.error("Withdraw application error:", error);
+      res.status(500).json({
+        message: "Failed to withdraw application",
+      });
+    }
   },
 };
 

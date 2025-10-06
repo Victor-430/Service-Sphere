@@ -173,7 +173,7 @@ delete userResponse.emailVerificationToken
 res.status(200).json({
   message: 'Login Successful',
   data:{
-    user:UserResponse,
+    user:userResponse,
     token,
     tokenType: "Bearer"
   }
@@ -313,7 +313,7 @@ const {email} = req.body
   
   }catch(error){
     console.log('password reset email failed:', error)
-    user.passwordRestToken = undefined
+    user.passwordResetToken = undefined
     user.passwordResetExpires = undefined
     await user.save()
 
@@ -356,7 +356,7 @@ if(!user){
 // update password
 user.password = newPassword
 user.passwordResetExpires = undefined
-user.passwordRestToken = undefined
+user.passwordResetToken = undefined
 await user.save()
 
 res.status(200).json({

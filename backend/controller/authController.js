@@ -365,7 +365,7 @@ res.status(200).json({
 
   }catch(error){console.log("passwrod reset errro:", error)
 res.status(500).json({
-  message:"Faile to reset password"
+  message:"Failed to reset password"
 })
 
   }

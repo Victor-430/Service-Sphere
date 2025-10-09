@@ -71,7 +71,7 @@ const serviceSchema = new mongoose.Schema(
         validator: function (v) {
           return v.length <= 5;
         },
-        messagge: "Maximum 5 images allowed",
+        message: "Maximum 5 images allowed",
       },
     },
     status: {

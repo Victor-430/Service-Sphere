@@ -22,9 +22,9 @@ const registerValidation = [
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters")
-    .matches(/^(?=.*[a-z])(?=.*[A-Z](?=.*\d))/)
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage(
-      "Password must contain at least one lowercase, one upercase, and one number",
+      "Password must contain at least one lowercase, one uppercase, and one number",
     ),
   body("role")
     .optional()

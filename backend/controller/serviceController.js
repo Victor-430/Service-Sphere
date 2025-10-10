@@ -402,6 +402,45 @@ const serviceController = {
       });
     }
   },
+
+  // get service applications (Expert should view only their service)
+  getServiceApplication: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.query;
+
+      // check if the service belongs to the expert
+      const service = await Service.findById(id);
+
+      if (!service) {
+        return res.status(404).json({
+          message: "Service not found",
+        });
+      }
+      if (req.user._id() !== service.expertId.toString()) {
+        return res.status(403).json({
+          message: "You can only view applications for your own services",
+        });
+      }
+
+      const query = { serviceId: id };
+      if (status) query.status = status;
+
+      const applications = await Application.findById(query)
+        .populate(
+          "clientId",
+          "firstName lastName profileImage rating totalReviews",
+        )
+        .sort({ createdAAt: -1 });
+
+      res.status(200).json({ applications });
+    } catch (error) {
+      console.error("Get service apllication error:", error);
+      res.status(500).json({
+        message: "Failed to get service application",
+      });
+    }
+  },
 };
 
 export default serviceController;

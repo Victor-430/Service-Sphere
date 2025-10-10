@@ -61,7 +61,7 @@ const updateServiceValidation = [
     .withMessage("Invalid status"),
 ];
 
-const applyToService = [
+const applyToServiceValidation = [
   body("message")
     .isLength({ min: 20, max: 1000 })
     .trim()
@@ -95,10 +95,11 @@ serviceRouter.post(
   "/:id/apply",
   authenticateToken,
   authorizeRoles("client"),
+  applyToServiceValidation,
   serviceController.applyToService,
 );
 
-sserviceRouter.get(
+serviceRouter.get(
   "/:id/application",
   authenticateToken,
   authorizeRoles("expert"),

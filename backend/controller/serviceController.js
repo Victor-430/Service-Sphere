@@ -240,6 +240,7 @@ const serviceController = {
     }
   },
 
+  // delete service (Expert only should delete their services)
   deleteService: async (req, res) => {
     try {
       const errors = validationResult();
@@ -284,6 +285,120 @@ const serviceController = {
       console.error("Delete service error:", error);
       res.status(500).json({
         message: "Failed to delete service",
+      });
+    }
+  },
+
+  // get services by expert
+  getExpertServices: async (req, res) => {
+    try {
+      const { expertId } = req.params;
+      const { status, page = 1, limit = 10 } = req.query;
+
+      const query = { expertId };
+      if (status) query.status = status;
+
+      const skip = (Number(page) - 1) * Number(limit);
+
+      const services = await Service.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit))
+        .lean();
+
+      const total = await Service.countDocument(query);
+
+      res.status(200).json({
+        data: {
+          services,
+          pagination: {
+            totalServices: total,
+            totalPages: Math.ceil(total / Number(limit)),
+            currentPage: Number(page),
+          },
+        },
+      });
+    } catch (error) {
+      (console.error("Get expert service error:", error),
+        res.status(error).json({
+          message: "Failed to get Expert Service",
+        }));
+    }
+  },
+
+  //apply to a service (client only)
+  applyToService: async (req, res) => {
+    try {
+      const errors = validationResult();
+
+      if (!errors.isEmpty()) {
+        return res.status(403).json({
+          message: "Validation Error",
+          errors: errors.array(),
+        });
+      }
+
+      const { id } = req.params;
+      const { message, proposedPrice, proposedTimeline } = req.body;
+
+      // check if service exist and is active
+      const service = await Service.findById(id);
+
+      if (!service) {
+        return res.status(404).json({
+          message: "Service not found",
+        });
+      }
+
+      if (service.status !== "active") {
+        return res.status(400).json({
+          message: "This service is not accepting applications",
+        });
+      }
+
+      // check if the user is trying to apply to thier own service
+      if (req.user._id.toString() !== service.expertId.toString()) {
+        return res.status(400).json({
+          message: "You can not apply to your own service",
+        });
+      }
+
+      // check if already applied
+      const existingApplication = await Application.findOne({
+        serviceId: id,
+        clientId: req.user._id,
+      });
+
+      if (existingApplication) {
+        return res.status(400).json({
+          message: "You have already applied to this service",
+        });
+      }
+
+      // create application
+      const application = new Application({
+        serviceId: id,
+        clientId: req.user._id,
+        expertId: service.expertId,
+        message,
+        proposedTimeline,
+        proposedPrice,
+      });
+
+      await new application.save();
+
+      await application.populate([
+        { path: "clientId", select: "firstName lastName profileImage" },
+        { path: "serviceId", select: "title " },
+      ]);
+      res.status(200).json({
+        message: "Application submitted successfully",
+        data: { application },
+      });
+    } catch (error) {
+      console.error("Apply to service error:", error);
+      res.status(500).json({
+        message: "Application to service failed",
       });
     }
   },

@@ -43,3 +43,19 @@ const createServiceValidation = [
     .withMessage("Location must be remote, onsite or hybrid"),
   body("duration").trim().notEmpty().withMessage("Duration is required"),
 ];
+const updateServiceValidation = [
+  body("title")
+    .optional()
+    .trim()
+    .isLength({ min: 10, max: 100 })
+    .withMessage("Title must be between 10 and 100 characters"),
+  body("description")
+    .optional()
+    .trim()
+    .isLength({ min: 50, max: 2000 })
+    .withMessage("Description must be 50 and 2000 characters"),
+  body("status")
+    .isIn(["active", "paused", "completed", "cancelled"])
+    .optional()
+    .withMessage("Invalid status"),
+];

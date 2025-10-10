@@ -59,3 +59,19 @@ const updateServiceValidation = [
     .optional()
     .withMessage("Invalid status"),
 ];
+
+const applyToService = [
+  body("message")
+    .isLength({ min: 20, max: 1000 })
+    .trim()
+    .withMessage("Application message must be between 20 and 1000 characters"),
+  body("proposedTimeline")
+    .optional()
+    .notEmpty()
+    .optional()
+    .withMessage("Proposed timeline can not be empty"),
+  body("proposedPrice")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("Proposed price must be a postive number"),
+];

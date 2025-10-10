@@ -5,6 +5,7 @@ import routeNotFound from "./middleware/routeError.js";
 import authRoute from "./routes/auth.js";
 import applicationRouter from "./routes/applications.js";
 import userRoute from "./routes/users.js";
+import serviceRoute from "./routes/services.js";
 
 // mongoose connection
 ConnectDB();
@@ -38,6 +39,7 @@ app.use(urlencoded({ extended: false }));
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute.authRouter);
 app.use("/api/applications", applicationRouter);
+app.use("/api/service", serviceRoute);
 
 // middleware
 app.use(routeNotFound);

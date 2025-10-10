@@ -200,7 +200,7 @@ const serviceController = {
         });
       }
 
-      // Fieldss that can be updated
+      // Fields that can be updated
       const allowedUpdates = [
         "title",
         "description",

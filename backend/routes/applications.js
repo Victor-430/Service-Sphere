@@ -40,6 +40,6 @@ applicationRouter.put(
   authenticateToken,
   authorizeRoles("client"),
   applicationController.withdrawApplication,
-)
+);
 
 export default applicationRouter;

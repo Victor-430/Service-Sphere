@@ -2,6 +2,7 @@ import express from "express";
 import { body, query } from "express-validator";
 import authorizeRoles from "../middleware/authorization.js";
 import authenticateToken from "../middleware/auth.js";
+import serviceController from "../controller/serviceController.js";
 
 const serviceRouter = express.Router();
 
@@ -75,3 +76,47 @@ const applyToService = [
     .isFloat({ min: 0 })
     .withMessage("Proposed price must be a postive number"),
 ];
+
+// public route
+serviceRouter.get("/", serviceController.getAllServices);
+serviceRouter.get("/:id", serviceController.getServiceById);
+serviceRouter.get("/expert/:expertId", serviceController.getExpertServices);
+
+// private route
+serviceRouter.post(
+  "/",
+  authenticateToken,
+  authorizeRoles("expert"),
+  createServiceValidation,
+  serviceController.createService,
+);
+
+serviceRouter.post(
+  "/:id/apply",
+  authenticateToken,
+  authorizeRoles("client"),
+  serviceController.applyToService,
+);
+
+sserviceRouter.get(
+  "/:id/application",
+  authenticateToken,
+  authorizeRoles("expert"),
+  serviceController.getServiceApplication,
+);
+
+serviceRouter.delete(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("expert", "admin"),
+  serviceController.deleteService,
+);
+serviceRouter.put(
+  "/:id",
+  authenticateToken,
+  authorizeRoles("expert"),
+  updateServiceValidation,
+  serviceController.updateService,
+);
+
+export default serviceRouter;
